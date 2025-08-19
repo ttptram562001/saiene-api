@@ -38,7 +38,6 @@ def HelloApi(req: func.HttpRequest) -> func.HttpResponse:
             req_body = {}
         else:
             name = req_body.get('name')
-
     if name:
         return func.HttpResponse(f"Hello, {name}. This HTTP triggered function executed successfully.")
     else:
