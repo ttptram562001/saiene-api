@@ -1,0 +1,38 @@
+name: CI - Pull Request Opened
+
+on:
+  pull_request:
+    types: [opened, synchronize, reopened]
+    branches:
+      - develop
+
+jobs:
+  build-and-test:
+    if: startsWith(github.head_ref, 'feature/')   # source branch
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Install dependencies
+        run: |
+          python -m venv .venv
+          source .venv/bin/activate
+          pip install --upgrade pip
+          pip install -r requirements.txt
+
+      - name: Run tests
+        run: |
+          source .venv/bin/activate
+          pytest -v
+
+      - name: Verify build (Azure Functions Core Tools)
+        run: |
+          npm install -g azure-functions-core-tools@4 --unsafe-perm true
+          func --version
